@@ -45,13 +45,30 @@ screen = pygame.display.set_mode(screen_size)
 r = pygame.Rect(100, 100, 50, 50)
 
 
-
 run = True
 while run:
     clock.tick(2)
 
     Visual.Map_setup(screen, episode.layout, episode.coordinates, size_block, episode.m_pos)
     Visual.Draw_agents(screen, episode.positions, size_block)
+
+    # new moves
+    # Get state data for agent
+    episode.get_data()
+    # Agent makes move based on state data
+    player_choice = player.get_NN_output(episode.data[-1].reshape((1, 9)))
+    player_v_pos = player.make_move(player_choice, episode.layout)
+
+    # NPC make moves
+    # for i in range(n_NPC):
+    #     episode.NPC_list[i].current_actions = episode.get_direction(i)
+    #     episode.NPC_list[i].move()
+
+    # Update all positions
+    episode.update_positions(player_v_pos, player.current_pos)
+    episode.get_reward()
+    episode.check_goals()
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -60,44 +77,6 @@ while run:
     pygame.display.update()
 
 pygame.quit()
-
-
-
-
-
-#
-# run = True
-# while run:
-#     clock.tick(2)
-#
-#     Visual.Map_setup(screen, episode.layout, episode.coordinates, size_block, episode.m_pos)
-#     Visual.Draw_agents(screen, episode.positions, size_block)
-#
-#     # new moves
-#     # Get state data for agent
-#     episode.get_data()
-#     # Agent makes move based on state data
-#     player_choice = player.get_NN_output(episode.data[-1].reshape((1, 9)))
-#     player_v_pos = player.make_move(player_choice, episode.layout)
-#
-#     # NPC make moves
-#     # for i in range(n_NPC):
-#     #     episode.NPC_list[i].current_actions = episode.get_direction(i)
-#     #     episode.NPC_list[i].move()
-#
-#     # Update all positions
-#     episode.update_positions(player_v_pos, player.current_pos)
-#     episode.get_reward()
-#     episode.check_goals()
-#
-#
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             run = False
-#
-#     pygame.display.update()
-#
-# pygame.quit()
 
 
 
